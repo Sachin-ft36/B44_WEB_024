@@ -22,6 +22,11 @@ const EventCard = ({
   attendees,
   status,
 }: EventCardProps) => {
+  // Default image in case the provided one fails to load
+  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
+    e.currentTarget.src = "https://images.unsplash.com/photo-1519389950473-47ba0277781c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=600&q=80";
+  };
+
   return (
     <div className="bg-white rounded-2xl shadow-md overflow-hidden hover:shadow-lg transition-all">
       <div className="relative h-48">
@@ -29,6 +34,7 @@ const EventCard = ({
           src={imageUrl}
           alt={title}
           className="w-full h-full object-cover"
+          onError={handleImageError}
         />
         <StatusBadge status={status} className="absolute top-4 right-4" />
       </div>

@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
 import { useNavigate } from "react-router-dom";
+import { addEvent } from "@/services/eventService";
 
 const CreateEvent = () => {
   const { toast } = useToast();
@@ -21,7 +22,8 @@ const CreateEvent = () => {
     date: "",
     time: "",
     venue: "",
-    bannerImage: null,
+    bannerImage: null as File | null,
+    imageUrl: "",
   });
 
   const totalSteps = 4;
@@ -40,11 +42,30 @@ const CreateEvent = () => {
       setCurrentStep(currentStep + 1);
     } else {
       // Submit form
+      const dateFormatted = formData.date 
+        ? new Date(formData.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })
+        : new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+      
+      // Create a default image URL if none was uploaded
+      const imageUrl = formData.imageUrl || "https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=600&q=80";
+      
+      addEvent({
+        title: formData.name,
+        description: formData.description,
+        category: formData.category || "other",
+        visibility: formData.visibility,
+        date: dateFormatted,
+        time: formData.time,
+        location: formData.venue,
+        imageUrl,
+        status: "upcoming",
+      });
+      
       toast({
         title: "Event created!",
         description: "Your event has been successfully created.",
       });
-      navigate("/dashboard");
+      navigate("/timeline");
     }
   };
 
@@ -67,6 +88,17 @@ const CreateEvent = () => {
       ...formData,
       visibility: value,
     });
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      setFormData({
+        ...formData, 
+        bannerImage: file,
+        imageUrl: URL.createObjectURL(file)
+      });
+    }
   };
 
   const renderStep = () => {
@@ -230,20 +262,32 @@ const CreateEvent = () => {
             <div>
               <Label className="block mb-2">Event Banner Image</Label>
               <div className="border-2 border-dashed border-gray-300 rounded-2xl p-6 text-center">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="mx-auto h-12 w-12 text-gray-400"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-                  />
-                </svg>
+                {formData.imageUrl ? (
+                  <div className="mb-4">
+                    <img 
+                      src={formData.imageUrl} 
+                      alt="Event banner preview" 
+                      className="max-h-48 mx-auto rounded-lg object-cover" 
+                    />
+                    <p className="mt-2 text-sm text-gray-600">Preview of selected image</p>
+                  </div>
+                ) : (
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="mx-auto h-12 w-12 text-gray-400"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                    />
+                  </svg>
+                )}
+                
                 <p className="mt-2 text-sm text-gray-600">
                   Drag and drop an image here, or click to browse
                 </p>
@@ -253,17 +297,15 @@ const CreateEvent = () => {
                 <input
                   type="file"
                   className="hidden"
+                  id="banner-image"
                   accept="image/*"
-                  onChange={(e) => {
-                    if (e.target.files) {
-                      setFormData({
-                        ...formData,
-                        bannerImage: e.target.files[0],
-                      });
-                    }
-                  }}
+                  onChange={handleFileChange}
                 />
-                <Button variant="outline" className="mt-4">
+                <Button 
+                  variant="outline" 
+                  className="mt-4"
+                  onClick={() => document.getElementById('banner-image')?.click()}
+                >
                   Select Image
                 </Button>
               </div>
