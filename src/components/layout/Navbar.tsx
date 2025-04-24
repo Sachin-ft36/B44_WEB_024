@@ -1,8 +1,7 @@
-
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { CalendarPlus } from "lucide-react";
+import { Flame } from "lucide-react";  // Changed from CalendarPlus to Flame
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -34,10 +33,10 @@ const Navbar = () => {
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2">
             <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center">
-              <CalendarPlus className="h-6 w-6 text-white" />
+              <Flame className="h-6 w-6 text-white" />
             </div>
             <span className="font-poppins font-bold text-xl text-gray-900">
-              SESSI
+              EventSpark
             </span>
           </Link>
 

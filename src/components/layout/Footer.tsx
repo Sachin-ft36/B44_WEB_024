@@ -10,14 +10,14 @@ const Footer = () => {
           <div className="md:col-span-1">
             <Link to="/" className="flex items-center space-x-2 mb-4">
               <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
-                <span className="text-white font-bold text-lg">S</span>
+                <span className="text-white font-bold text-lg">E</span>
               </div>
               <span className="font-poppins font-bold text-xl text-white">
-                SESSI
+                EventSpark
               </span>
             </Link>
             <p className="text-gray-400 text-sm">
-              Smart Education Support System India - Revolutionizing event creation and management for educational institutions.
+              EventSpark - Revolutionizing event creation and management for educational institutions.
             </p>
           </div>
 
